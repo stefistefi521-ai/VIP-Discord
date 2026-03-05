@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Memberships — Discord</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --gold-dark: #8b6914;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --dark2: #1a1a1a;
+    --dark3: #242424;
+    --white: #f5f0eb;
+    --muted: #888;
+    --exclusive: #c084fc;
+    --executive: #60a5fa;
+    --elite: #34d399;
+    --supreme: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,169,110,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,169,110,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,169,110,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 30% at 80% 60%, rgba(201,169,110,0.05) 0%, transparent 60%);
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(201,169,110,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,169,110,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-divider {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-desc {
+    max-width: 500px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .scroll-hint span {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* Section */
+  .section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 4rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* Tiers grid */
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    background: rgba(201,169,110,0.1);
+    border: 1px solid rgba(201,169,110,0.1);
+  }
+
+  .tier {
+    background: var(--dark);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+
+  .tier::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--tier-color, var(--gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+
+  .tier:hover {
+    background: var(--dark2);
+  }
+
+  .tier:hover::before {
+    transform: scaleX(1);
+  }
+
+  .tier-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 0%, var(--tier-color, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .tier:hover .tier-glow {
+    opacity: 0.04;
+  }
+
+  .tier-badge {
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--tier-color, var(--gold));
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tier-badge::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--tier-color, var(--gold));
+  }
+
+  .tier-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+
+  .tier-price {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+  }
+
+  .tier-price strong {
+    font-size: 1.4rem;
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .tier-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 1.5rem;
+  }
+
+  .tier-discount {
+    background: rgba(201,169,110,0.08);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 2px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .tier-discount-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+
+  .tier-discount-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .tier-discount-cond {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  .tier-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .tier-features li {
+    font-size: 0.75rem;
+    color: #aaa;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.5;
+  }
+
+  .tier-features li::before {
+    content: '◆';
+    font-size: 0.4rem;
+    color: var(--tier-color, var(--gold));
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  /* Supreme tier special */
+  .tier.supreme {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: linear-gradient(135deg, #111 0%, #1a1008 100%);
+  }
+
+  .tier.supreme .tier-left {}
+  .tier.supreme .tier-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .supreme-highlight {
+    background: linear-gradient(135deg, rgba(201,169,110,0.12), rgba(201,169,110,0.05));
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 2px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .supreme-highlight-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .supreme-highlight-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .supreme-highlight-note {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+
+  /* How it works */
+  .how {
+    padding: 6rem 2rem;
+    background: var(--dark);
+    border-top: 1px solid rgba(201,169,110,0.08);
+    border-bottom: 1px solid rgba(201,169,110,0.08);
+  }
+
+  .steps {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: rgba(201,169,110,0.15);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.7rem;
+  }
+
+  .step-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* Footer */
+  footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(201,169,110,0.08);
+  }
+
+  footer p {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+  @media (max-width: 768px) {
+    .tier.supreme {
+      grid-template-columns: 1fr;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .tiers {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-tag">Servidor Discord — Programa VIP</div>
+  <h1>Tu membresía.<br><em>Tu descuento.</em></h1>
+  <p class="hero-sub">Acceso exclusivo · Beneficios reales · Envío gratis</p>
+  <div class="hero-divider"></div>
+  <p class="hero-desc">Como miembro de nuestro servidor de Discord, disfruta de descuentos exclusivos en todos nuestros productos. Cuanto mayor sea tu rango, mayor será tu privilegio.</p>
+  <div style="margin-top:2rem; display:inline-flex; align-items:center; gap:0.6rem; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); padding:0.6rem 1.2rem; border-radius:2px; opacity:0; animation: fadeUp 0.8s 1s forwards;">
+    <span style="font-size:1rem; color:#f87171; font-weight:700;">+18</span>
+    <span style="font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:#f87171;">Verificación de edad obligatoria para acceder al servidor</span>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Descubrir rangos</span>
+  </div>
+</section>
+
+<!-- Tiers -->
+<section class="section">
+  <p class="section-label">Niveles de membresía</p>
+  <h2 class="section-title">Elige tu <em style="font-family:'Cormorant Garamond',serif;font-style:italic;">rango</em></h2>
+
+  <div class="tiers">
+
+    <!-- EXCLUSIVE -->
+    <div class="tier" style="--tier-color: #c084fc">
+      <div class="tier-glow"></div>
+      <div class="tier-badge">Nivel 01 — Exclusive</div>
+      <div class="tier-name">Exclusive</div>
+      <div class="tier-price"><strong>€15</strong> / mes</div>
+      <div class="tier-divider"></div>
+      <div class="tier-discount">
+        <div class="tier-discount-label">Descuento en tienda</div>
+        <div class="tier-discount-value">10% OFF</div>
+        <div class="tier-discount-cond">En compras superiores a €40<br>+ Envío gratis incluido</div>
+      </div>
+      <ul class="tier-features">
+        <li>Acceso a canales VIP y chats de voz exclusivos</li>
+        <li>Color de nombre distintivo y prioridad en eventos</li>
+        <li>10% de descuento en pedidos +€40</li>
+        <li>Envío gratuito en todos los pedidos</li>
+      </ul>
+    </div>
+
+    <!-- EXECUTIVE PARTNER -->
+    <div class="tier" style="--tier-color: #60a5fa">
+      <div class="tier-glow"></div>
+      <div class="tier-badge">Nivel 02 — Executive</div>
+      <div class="tier-name">Executive<br>Partner</div>
+      <div class="tier-price"><strong>€25</strong> / mes</div>
+      <div class="tier-divider"></div>
+      <div class="tier-discount">
+        <div class="tier-discount-label">Descuento en tienda</div>
+        <div class="tier-discount-value">15% OFF</div>
+        <div class="tier-discount-cond">En TODOS los productos<br>+ Envío gratis en pedidos +€60</div>
+      </div>
+      <ul class="tier-features">
+        <li>Permisos para publicar media, GIFs y stickers</li>
+        <li>15% de descuento en todos los productos</li>
+        <li>Envío gratuito en pedidos superiores a €60</li>
+      </ul>
+    </div>
+
+    <!-- ELITE MEMBER -->
+    <div class="tier" style="--tier-color: #34d399">
+      <div class="tier-glow"></div>
+      <div class="tier-badge">Nivel 03 — Elite</div>
+      <div class="tier-name">Elite<br>Member</div>
+      <div class="tier-price"><strong>€40</strong> / mes</div>
+      <div class="tier-divider"></div>
+      <div class="tier-discount">
+        <div class="tier-discount-label">Descuento en tienda</div>
+        <div class="tier-discount-value">25% OFF</div>
+        <div class="tier-discount-cond">En TODOS los productos<br>+ Envío global a +100 países (pedidos +€60)</div>
+      </div>
+      <ul class="tier-features">
+        <li>Acceso al chat secreto "Secret Elite"</li>
+        <li>Screen sharing en alta calidad y rol prioritario</li>
+        <li>25% de descuento en todos los productos</li>
+        <li>Envío global gratuito a más de 100 países</li>
+      </ul>
+    </div>
+
+    <!-- SUPREME: MOMMY / DADDY -->
+    <div class="tier supreme" style="--tier-color: #f87171">
+      <div class="tier-glow"></div>
+      <div class="tier-left">
+        <div class="tier-badge">『』Rango Supremo</div>
+        <div class="tier-name" style="font-size:2.4rem">Mommy<br>/ Daddy</div>
+        <div class="tier-price"><strong>€150</strong> / mes</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li>Rol personalizado con icono único</li>
+          <li>Canal de voz privado exclusivo</li>
+          <li>Inmunidad parcial al auto-mod</li>
+          <li>Mensaje de bienvenida personalizado del Staff</li>
+          <li>Envío mundial gratuito en pedidos +€60</li>
+          <li>Límite de compra con descuento: €400/mes</li>
+        </ul>
+      </div>
+      <div class="tier-right">
+        <div class="supreme-highlight">
+          <div class="supreme-highlight-label">Descuento máximo en tienda</div>
+          <div class="supreme-highlight-value">40% OFF</div>
+          <div class="supreme-highlight-note">
+            En colecciones seleccionadas<br>
+            + Envío mundial gratuito (pedidos +€60)<br>
+            <br>
+            <em style="color:#c9a96e;">Fair Use Policy: descuentos aplicados hasta un máximo de €400/mes para garantizar disponibilidad de stock para todos los miembros.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- How it works -->
+<div class="how">
+  <div style="max-width:1200px; margin:0 auto; padding:0 2rem;">
+    <p class="section-label" style="text-align:center; margin-bottom:1rem;">¿Cómo funciona?</p>
+    <h2 class="section-title" style="text-align:center; margin-bottom:3rem;">Tres pasos <em style="font-family:'Cormorant Garamond',serif;font-style:italic;">simples</em></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Verificación de edad</div>
+        <div class="step-desc">Al unirte al servidor pasarás por un proceso de <strong style="color:#c9a96e;">verificación de edad obligatorio</strong>. Solo mayores de 18 años tienen acceso al servidor principal.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Elige tu rango</div>
+        <div class="step-desc">Una vez verificado, selecciona el nivel de suscripción que mejor se adapte a ti y actívalo en el servidor.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Contacta al Director</div>
+        <div class="step-desc">Envía un mensaje directo a <strong style="color:#c9a96e;">@lordkeny</strong> indicando los productos que deseas y tu rango activo.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Recibe tu pedido</div>
+        <div class="step-desc">lordkeny gestionará tu pedido con el descuento de tu membresía aplicado y el envío gratuito correspondiente.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p style="margin-bottom:0.5rem; font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:#c9a96e; font-weight:300;">Discord VIP — Membresías Exclusivas</p>
+  <p>Para realizar pedidos, contacta directamente a <strong style="color:#c9a96e;">@lordkeny</strong> por mensaje directo en Discord.</p>
+  <p style="margin-top:0.5rem;">Los descuentos se aplican automáticamente según tu rango activo en el servidor.</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Hover effect on interactive elements
+  document.querySelectorAll('.tier, a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '50px';
+      ring.style.height = '50px';
+      ring.style.borderColor = 'rgba(201,169,110,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(201,169,110,0.5)';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.tier, .step, .section-title, .section-label').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
